@@ -17,7 +17,7 @@
 #ifndef PART1_OSCILLATOR_H
 #define PART1_OSCILLATOR_H
 
-
+#include <atomic>
 #include <stdint.h>
 
 class Oscillator {
@@ -29,7 +29,8 @@ public:
     void render(float *audioData, int32_t numFrames);
 
 private:
-    bool isWaveOn_ = false;
+    // We use an atomic bool to define isWaveOn_ because it is accessed from multiple threads.
+    std::atomic<bool> isWaveOn_{false};
     double phase_ = 0.0;
     double phaseIncrement_ = 0.0;
 };
