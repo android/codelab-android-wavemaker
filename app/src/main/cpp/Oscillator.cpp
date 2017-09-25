@@ -26,15 +26,18 @@ void Oscillator::setSampleRate(int32_t sampleRate) {
 }
 
 void Oscillator::setWaveOn(bool isWaveOn) {
-    isWaveOn_ = isWaveOn;
-    if (!isWaveOn) phase_ = 0;
+    isWaveOn_.store(isWaveOn);
 }
 
 void Oscillator::render(float *audioData, int32_t numFrames) {
 
+    // If the wave has been switched off then reset the phase to zero. Starting at a non-zero value
+    // could result in an unwanted audible 'click'
+    if (!isWaveOn_.load()) phase_ = 0;
+
     for (int i = 0; i < numFrames; i++) {
 
-        if (isWaveOn_) {
+        if (isWaveOn_.load()) {
 
             // Calculates the next sample value for the sine wave.
             audioData[i] = (float) (sin(phase_) * AMPLITUDE);
