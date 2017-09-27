@@ -28,6 +28,8 @@ public:
 
     void stop();
 
+    void restart();
+
     void setToneOn(bool isToneOn);
 
 private:
