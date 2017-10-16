@@ -22,8 +22,6 @@
 
 class AudioEngine {
 public:
-    AudioEngine();
-
     bool start();
 
     void stop();
@@ -33,7 +31,7 @@ public:
     void setToneOn(bool isToneOn);
 
 private:
-    Oscillator *oscillator_;
+    Oscillator oscillator_;
     AAudioStream *stream_;
 };
 

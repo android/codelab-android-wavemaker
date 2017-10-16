@@ -38,17 +38,13 @@ void errorCallback(AAudioStream *stream,
     }
 }
 
-AudioEngine::AudioEngine() {
-    oscillator_ = new Oscillator();
-}
-
 bool AudioEngine::start() {
     AAudioStreamBuilder *streamBuilder;
     AAudio_createStreamBuilder(&streamBuilder);
     AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
     AAudioStreamBuilder_setChannelCount(streamBuilder, 1);
     AAudioStreamBuilder_setPerformanceMode(streamBuilder, AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
-    AAudioStreamBuilder_setDataCallback(streamBuilder, ::dataCallback, oscillator_);
+    AAudioStreamBuilder_setDataCallback(streamBuilder, ::dataCallback, &oscillator_);
     AAudioStreamBuilder_setErrorCallback(streamBuilder, ::errorCallback, this);
 
     // Opens the stream.
@@ -61,7 +57,7 @@ bool AudioEngine::start() {
 
     // Retrieves the sample rate of the stream for our oscillator.
     int32_t sampleRate = AAudioStream_getSampleRate(stream_);
-    oscillator_->setSampleRate(sampleRate);
+    oscillator_.setSampleRate(sampleRate);
 
     // Starts the stream.
     result = AAudioStream_requestStart(stream_);
@@ -93,5 +89,5 @@ void AudioEngine::restart(){
 }
 
 void AudioEngine::setToneOn(bool isToneOn) {
-    oscillator_->setWaveOn(isToneOn);
+    oscillator_.setWaveOn(isToneOn);
 }
