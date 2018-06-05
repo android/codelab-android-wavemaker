@@ -18,6 +18,9 @@
 #include <thread>
 #include <mutex>
 
+constexpr int32_t kBufferSizeInBursts = 2;
+
+
 aaudio_data_callback_result_t dataCallback(
         AAudioStream *stream,
         void *userData,
@@ -58,6 +61,10 @@ bool AudioEngine::start() {
     // Retrieves the sample rate of the stream for our oscillator.
     int32_t sampleRate = AAudioStream_getSampleRate(stream_);
     oscillator_.setSampleRate(sampleRate);
+
+    // Sets the buffer size.
+    AAudioStream_setBufferSizeInFrames(
+    stream_, AAudioStream_getFramesPerBurst(stream_) * kBufferSizeInBursts);
 
     // Starts the stream.
     result = AAudioStream_requestStart(stream_);
