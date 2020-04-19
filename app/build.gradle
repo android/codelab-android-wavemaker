@@ -17,12 +17,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 29
+    ndkVersion = "21.0.6113669"
+
     defaultConfig {
         applicationId "com.example.wavemaker"
         minSdkVersion 26
-        targetSdkVersion 26
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
