@@ -29,8 +29,9 @@ public:
     void render(float *audioData, int32_t numFrames);
 
 private:
-    // We use an atomic bool to define isWaveOn_ because it is accessed from multiple threads.
+    // Atomic bool is used for isWaveOn_ & isRunning_ because both are accessed from multiple threads.
     std::atomic<bool> isWaveOn_{false};
+    std::atomic<bool> isRunning_{false};
     double phase_ = 0.0;
     double phaseIncrement_ = 0.0;
 };

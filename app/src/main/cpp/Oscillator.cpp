@@ -27,28 +27,35 @@ void Oscillator::setSampleRate(int32_t sampleRate) {
 
 void Oscillator::setWaveOn(bool isWaveOn) {
     isWaveOn_.store(isWaveOn);
+    if (isWaveOn) {
+        // Sets the initial phase for a click-free start.
+        phase_ = 0.0;
+        isRunning_.store(true);
+    }
 }
 
 void Oscillator::render(float *audioData, int32_t numFrames) {
 
-    // If the wave has been switched off then reset the phase to zero. Starting at a non-zero value
-    // could result in an unwanted audible 'click'
-    if (!isWaveOn_.load()) phase_ = 0;
+    // Stages an off-request for implementation at the next zero crossing with a positive slope.
+    bool isOffStaged = isRunning_.load() && !isWaveOn_.load();
 
     for (int i = 0; i < numFrames; i++) {
 
-        if (isWaveOn_.load()) {
-
+        if (isRunning_.load()) {
             // Calculates the next sample value for the sine wave.
-            audioData[i] = (float) (sin(phase_) * AMPLITUDE);
-
-            // Increments the phase, handling wrap around.
+            audioData[i] = (float) (AMPLITUDE * sin(phase_));
             phase_ += phaseIncrement_;
-            if (phase_ > TWO_PI) phase_ -= TWO_PI;
-
+            // Handles phase wrap around.
+            if (phase_ > TWO_PI) {
+                phase_ -= TWO_PI;
+                // Switches off at a zero crossing for a click-free stop, if staged.
+                if (isOffStaged) {
+                    isRunning_.store(false);
+                }
+            }
         } else {
             // Outputs silence by setting sample value to zero.
-            audioData[i] = 0;
+            audioData[i] = 0.0;
         }
     }
 }
